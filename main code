@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matrix Club — Final Polish ✨</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{--bg1:#020617;--bg2:#0f172a;--c1:#38bdf8;--c2:#a78bfa;--c3:#22c55e;--c4:#f59e0b;--c5:#ef4444;--c6:#ec4899}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{background:linear-gradient(135deg,var(--bg2),var(--bg1));color:white;overflow-x:hidden}
+
+/* progress bar */
+#progress{position:fixed;top:0;left:0;height:4px;width:0;background:linear-gradient(90deg,var(--c1),var(--c6));z-index:999}
+
+/* cursor glow */
+.cursor{position:fixed;width:20px;height:20px;border-radius:50%;background:rgba(56,189,248,.4);pointer-events:none;transform:translate(-50%,-50%);z-index:999}
+
+canvas{position:fixed;top:0;left:0;z-index:-1}
+
+nav{display:flex;justify-content:space-between;align-items:center;padding:18px 40px;position:sticky;top:0;background:rgba(2,6,23,.7);backdrop-filter:blur(10px);z-index:10}
+nav h2{background:linear-gradient(90deg,var(--c1),var(--c2));-webkit-background-clip:text;color:transparent}
+nav ul{display:flex;gap:20px;list-style:none}
+nav a{color:white;text-decoration:none}
+
+header{height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+header h1{font-size:3rem;background:linear-gradient(90deg,var(--c1),var(--c6),var(--c2));-webkit-background-clip:text;color:transparent}
+#typed{margin-top:10px}
+button{padding:12px 25px;border:none;border-radius:30px;background:linear-gradient(90deg,var(--c1),var(--c6));cursor:pointer}
+
+section{padding:120px 20px;text-align:center}
+h2{margin-bottom:30px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:25px;max-width:1100px;margin:auto}
+
+.card{background:rgba(255,255,255,0.05);backdrop-filter:blur(10px);padding:25px;border-radius:15px;transition:.4s;opacity:0;transform:translateY(40px)}
+.card.show{opacity:1;transform:translateY(0)}
+.card:hover{transform:translateY(-10px) scale(1.05)}
+
+/* tilt effect */
+.card.tilt{transform-style:preserve-3d}
+
+.counter{font-size:2rem;margin:10px 0}
+
+.image-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;max-width:1200px;margin:auto}
+.image-grid img{width:100%;height:200px;object-fit:cover;border-radius:12px;transition:.3s}
+.image-grid img:hover{transform:scale(1.05)}
+
+footer{text-align:center;padding:30px}
+</style>
+</head>
+
+<body>
+<div id="progress"></div>
+<div class="cursor" id="cursor"></div>
+<canvas id="bg"></canvas>
+
+<nav>
+<h2>Matrix Club</h2>
+<ul>
+<li><a href="#about">About</a></li>
+<li><a href="#stats">Stats</a></li>
+<li><a href="#hackathons">Hackathons</a></li>
+<li><a href="#events">Events</a></li>
+<li><a href="#join">Join</a></li>
+</ul>
+</nav>
+
+<header>
+<h1>Matrix Club 🚀</h1>
+<p id="typed"></p>
+<button onclick="scrollToJoin()">Join Now</button>
+</header>
+
+<section id="about">
+<h2>About</h2>
+<p>Next-gen tech club focused on innovation, coding, and real-world development.</p>
+</section>
+
+<section id="stats">
+<h2>Our Impact</h2>
+<div class="grid">
+<div class="card tilt"><div class="counter" data-target="100">0</div><p>Members</p></div>
+<div class="card tilt"><div class="counter" data-target="50">0</div><p>Events</p></div>
+<div class="card tilt"><div class="counter" data-target="20">0</div><p>Projects</p></div>
+<div class="card tilt"><div class="counter" data-target="10">0</div><p>Winners</p></div>
+</div>
+</section>
+
+<section id="hackathons">
+<h2>Hackathon Moments</h2>
+<div class="image-grid">
+<img src="https://images.unsplash.com/photo-1531482615713-2afd69097998">
+<img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c">
+<img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d">
+<img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d">
+</div>
+</section>
+
+<section id="events">
+<h2>Events & Workshops</h2>
+<div class="image-grid">
+<img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df">
+<img src="https://images.unsplash.com/photo-1503428593586-e225b39bddfe">
+<img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f">
+<img src="https://images.unsplash.com/photo-1515169067868-5387ec356754">
+</div>
+</section>
+
+<section id="join">
+<h2>Join Us</h2>
+<form onsubmit="handleSubmit(event)">
+<input type="text" placeholder="Your Name" required>
+<input type="email" placeholder="Your Email" required>
+<button type="submit">Join</button>
+</form>
+<p id="msg"></p>
+</section>
+
+<footer>© 2026 Matrix Club ✨</footer>
+
+<script>
+// typing
+const text="Build. Learn. Innovate.";let i=0;(function type(){if(i<text.length){document.getElementById('typed').innerHTML+=text[i++];setTimeout(type,50)}})();
+
+function scrollToJoin(){document.getElementById('join').scrollIntoView({behavior:'smooth'})}
+function handleSubmit(e){e.preventDefault();document.getElementById('msg').innerText='Welcome 🚀'}
+
+// scroll reveal
+const cards=document.querySelectorAll('.card');
+window.addEventListener('scroll',()=>{
+ cards.forEach(card=>{if(card.getBoundingClientRect().top<window.innerHeight-50){card.classList.add('show')}})
+})
+
+// counter
+const counters=document.querySelectorAll('.counter');let started=false;
+window.addEventListener('scroll',()=>{
+ if(!started && document.getElementById('stats').getBoundingClientRect().top<window.innerHeight){
+  counters.forEach(c=>{let target=+c.dataset.target,count=0,inc=target/100;function update(){count+=inc;if(count<target){c.innerText=Math.floor(count);requestAnimationFrame(update)}else c.innerText=target}update()});started=true;
+ }
+});
+
+// progress bar
+window.addEventListener('scroll',()=>{
+ let scrollTop=document.documentElement.scrollTop;
+ let height=document.documentElement.scrollHeight-document.documentElement.clientHeight;
+ document.getElementById('progress').style.width=(scrollTop/height)*100+'%';
+});
+
+// cursor glow
+const cursor=document.getElementById('cursor');
+document.addEventListener('mousemove',e=>{
+ cursor.style.left=e.clientX+'px';
+ cursor.style.top=e.clientY+'px';
+});
+
+// tilt effect
+const tiltCards=document.querySelectorAll('.tilt');
+tiltCards.forEach(card=>{
+ card.addEventListener('mousemove',e=>{
+  let rect=card.getBoundingClientRect();
+  let x=e.clientX-rect.left; let y=e.clientY-rect.top;
+  let rotateX=(y/rect.height-0.5)*10;
+  let rotateY=(x/rect.width-0.5)*-10;
+  card.style.transform=`rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+ });
+ card.addEventListener('mouseleave',()=>{card.style.transform='rotateX(0) rotateY(0)'});
+});
+
+// particles
+const canvas=document.getElementById('bg');const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+let particles=[];for(let i=0;i<80;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2})}
+function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='white';ctx.fill();p.y+=0.3;if(p.y>canvas.height)p.y=0});requestAnimationFrame(draw)}draw();
+</script>
+
+</body>
+</html>
